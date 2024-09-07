@@ -1,35 +1,62 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { celebrities } from "@/app/data";
 import Card from "@/components/Card";
 
+export type DataType = {
+  first_name: string;
+  last_name: string;
+  age: number;
+  email: string;
+  address: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  };
+  hobbies: string[];
+  bio: string;
+  occupation: string;
+  country_of_origin: string;
+  relationship_status: string;
+}[];
+
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState<DataType>();
 
-  useEffect(() => {
-    fetchCelebrities();
-  }, []);
+  console.log(searchResults);
 
-  const fetchCelebrities = async () => {
-    const { data, error } = await supabaseClient
-      .from("celebrities")
-      .select("*")
-      .order("first_name", { ascending: true });
+  // useEffect(() => {
+  //   fetchCelebrities();
+  // }, []);
 
-    if (error) {
-      console.log(error);
-    } else {
-      console.log(data);
-      setSearchResults(data as never[]);
-    }
-  };
+  // const fetchCelebrities = async () => {
+  //   const { data, error } = await supabaseClient
+  //     .from("celebrities")
+  //     .select("*")
+  //     .order("first_name", { ascending: true });
 
-  const handleChange = (event: any) => {
+  //   if (error) {
+  //     console.log(error);
+  //   } else {
+  //     console.log(data);
+  //     setSearchResults(data as never[]);
+  //   }
+  // };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
-  const handleSubmit = async (event: any) => {
+
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    const searchResults = celebrities.filter((profile) => {
+      const fullName = `${profile.first_name} ${profile.last_name}`;
+      return fullName.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+    setSearchResults(searchResults);
+    console.log(searchResults);
   };
 
   return (
@@ -53,9 +80,10 @@ export default function Home() {
         </button>
       </form>
       <div className="w-1/2 grid gap-8">
-        {celebrities.map((profile, index) => (
-          <Card key={index} profile={profile} />
-        ))}
+        {searchResults &&
+          searchResults.map((profile, index) => (
+            <Card key={index} profile={profile} />
+          ))}
       </div>
       <button className="mt-10">Setup</button>
     </div>
