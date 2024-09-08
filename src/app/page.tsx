@@ -2,24 +2,7 @@
 import React, { useState } from "react";
 import { celebrities } from "@/app/data";
 import Card from "@/components/Card";
-
-export type DataType = {
-  first_name: string;
-  last_name: string;
-  age: number;
-  email: string;
-  address: {
-    street: string;
-    city: string;
-    state: string;
-    zipCode: string;
-  };
-  hobbies: string[];
-  bio: string;
-  occupation: string;
-  country_of_origin: string;
-  relationship_status: string;
-}[];
+import { DataType } from "@/types/type";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -60,7 +43,7 @@ export default function Home() {
   };
 
   return (
-    <div className="py-16 w-full flex justify-center items-center bg-gray-100 flex-col">
+    <div className="py-16 w-full flex justify-center items-center flex-col">
       <form
         onSubmit={handleSubmit}
         className="m-16 bg-white rounded-lg shadow-md flex w-full md:w-1/2 p-4"
@@ -74,7 +57,7 @@ export default function Home() {
         />
         <button
           type="submit"
-          className="px-5 py-2 bg-green-500 font-bold text-white rounded-lg"
+          className="px-5 py-2 bg-green-500 hover:bg-green-600 active:bg-green-700 font-bold text-white rounded-lg"
         >
           検索
         </button>
