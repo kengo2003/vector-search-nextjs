@@ -1,8 +1,9 @@
 "use client";
-import React, { useState } from "react";
-import { celebrities } from "@/app/data";
+import React, { useEffect, useState } from "react";
 import Card from "@/components/Card";
 import { DataType } from "@/types/type";
+import { supabaseClient } from "@/utils/supabaseClient";
+import { celebrities } from "./data";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -10,22 +11,35 @@ export default function Home() {
 
   console.log(searchResults);
 
-  // useEffect(() => {
-  //   fetchCelebrities();
-  // }, []);
+  useEffect(() => {
+    fetchCelebrities();
+  }, []);
 
-  // const fetchCelebrities = async () => {
-  //   const { data, error } = await supabaseClient
-  //     .from("celebrities")
-  //     .select("*")
-  //     .order("first_name", { ascending: true });
+  const fetchCelebrities = async () => {
+    const { data, error } = await supabaseClient
+      .from("parson")
+      .select("*")
+      .order("first_name", { ascending: true });
 
-  //   if (error) {
-  //     console.log(error);
-  //   } else {
-  //     console.log(data);
-  //     setSearchResults(data as never[]);
-  //   }
+    if (error) {
+      console.log(error);
+    } else {
+      setSearchResults(data as never[]);
+    }
+  };
+
+  // const postSetup = async () => {
+  //   const res = await fetch("/api/table", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       celebrities: celebrities,
+  //     }),
+  //   });
+  //   const data = await res.json();
+  //   return data;
   // };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,12 +48,23 @@ export default function Home() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    const searchResults = celebrities.filter((profile) => {
-      const fullName = `${profile.first_name} ${profile.last_name}`;
-      return fullName.toLowerCase().includes(searchTerm.toLowerCase());
-    });
-    setSearchResults(searchResults);
-    console.log(searchResults);
+
+    if (searchTerm.trim() === "") {
+      await fetchCelebrities();
+    } else {
+      const semanticSearrch = await fetch("/api/search", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          searchTerm: searchTerm,
+        }),
+      });
+      const semanticSearrchResponse = await semanticSearrch.json();
+      console.log(semanticSearrchResponse.data);
+      setSearchResults(semanticSearrchResponse.data);
+    }
   };
 
   return (
@@ -63,12 +88,17 @@ export default function Home() {
         </button>
       </form>
       <div className="w-1/2 grid gap-8">
-        {searchResults &&
+        {searchResults ? (
           searchResults.map((profile, index) => (
             <Card key={index} profile={profile} />
-          ))}
+          ))
+        ) : (
+          <p>response undefined</p>
+        )}
       </div>
-      <button className="mt-10">Setup</button>
+      {/* <button className="mt-10" onClick={postSetup}>
+        Setup
+      </button> */}
     </div>
   );
 }

@@ -1,0 +1,36 @@
+import { NextResponse } from "next/server";
+import OpenAI from "openai";
+import { supabaseClient } from "@/utils/supabaseClient";
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+export async function POST(request: Request) {
+  const body = await request.json();
+  const query = body.searchTerm;
+
+  if (!query) {
+    return NextResponse.json({ error: "Empty query" });
+  }
+  const openAiEmbeddings = await openai.embeddings.create({
+    model: "text-embedding-ada-002",
+    input: query,
+  });
+  const [{ embedding }] = openAiEmbeddings.data;
+
+  console.log("log:", embedding.length); //データの長さチェック
+
+  const { data, error } = await supabaseClient.rpc("vector_search", {
+    query_embedding: embedding,
+    similarity_threshold: 0.8,
+    match_count: 3,
+  });
+
+  if (data) {
+    return NextResponse.json({ data });
+  }
+  if (error) {
+    console.error("Supabase RPC error:", error.message);
+    console.error("Details:", error.details);
+    return NextResponse.json({ error });
+  }
+}
