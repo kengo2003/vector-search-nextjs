@@ -6,7 +6,7 @@ type CardProps = {
 };
 
 const Card = ({ profile }: CardProps) => (
-  <div className="rounded shadow-lg w-1/2 m-auto ">
+  <div className="w-full rounded shadow-lg m-auto md:w-1/2">
     <Image
       src={profile.image}
       alt={profile.first_name}

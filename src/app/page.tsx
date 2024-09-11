@@ -76,7 +76,7 @@ export default function Home() {
     <div className="py-16 w-full flex justify-center items-center flex-col">
       <form
         onSubmit={handleSubmit}
-        className="m-16 bg-white rounded-lg shadow-md flex w-full md:w-1/2 p-4"
+        className="w-4/5 mb-5 bg-white rounded-lg shadow-md flex md:w-1/2 md:m-16 p-4"
       >
         <input
           type="text"
@@ -92,7 +92,7 @@ export default function Home() {
           検索
         </button>
       </form>
-      <div className="w-1/2 grid gap-8">
+      <div className="w-4/5 md:w-1/2 grid gap-8">
         {searchResults ? (
           searchResults.map((profile, index) => (
             <Card key={index} profile={profile} />
