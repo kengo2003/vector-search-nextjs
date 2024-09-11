@@ -3,13 +3,10 @@ import React, { useEffect, useState } from "react";
 import Card from "@/components/Card";
 import { DataType } from "@/types/type";
 import { supabaseClient } from "@/utils/supabaseClient";
-import { celebrities } from "./data";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<DataType>();
-
-  console.log(searchResults);
 
   useEffect(() => {
     fetchCelebrities();
@@ -50,6 +47,7 @@ export default function Home() {
     event.preventDefault();
 
     if (searchTerm.trim() === "") {
+      alert("入力値が空です");
       await fetchCelebrities();
     } else {
       const semanticSearrch = await fetch("/api/search", {
@@ -62,7 +60,14 @@ export default function Home() {
         }),
       });
       const semanticSearrchResponse = await semanticSearrch.json();
-      console.log(semanticSearrchResponse.data);
+      if (
+        !semanticSearrchResponse.data ||
+        (Array.isArray(semanticSearrchResponse.data) &&
+          semanticSearrchResponse.data.length === 0)
+      ) {
+        alert("データが見つかりません");
+        window.location.reload();
+      }
       setSearchResults(semanticSearrchResponse.data);
     }
   };
@@ -93,7 +98,7 @@ export default function Home() {
             <Card key={index} profile={profile} />
           ))
         ) : (
-          <p>response undefined</p>
+          <p className="text-2xl text-center">ローディング中...</p>
         )}
       </div>
       {/* <button className="mt-10" onClick={postSetup}>
