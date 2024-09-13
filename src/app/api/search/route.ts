@@ -1,12 +1,18 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import { supabaseClient } from "@/utils/supabaseClient";
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
+interface SearchRequestBody {
+  searchTerm: string;
+}
+
 export async function POST(request: Request) {
-  const body = await request.json();
-  const query = body.searchTerm;
+  const body: SearchRequestBody = await request.json();
+  const query: string = body.searchTerm;
 
   if (!query) {
     return NextResponse.json({ error: "Empty query" });
@@ -15,7 +21,7 @@ export async function POST(request: Request) {
     model: "text-embedding-ada-002",
     input: query,
   });
-  const [{ embedding }] = openAiEmbeddings.data;
+  const [{ embedding }]: { embedding: number[] }[] = openAiEmbeddings.data;
 
   console.log("log:", embedding.length); //データの長さチェック
 

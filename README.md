@@ -4,6 +4,7 @@ supabaseのベクトルデータベースとOpenAI Embeddings APIを利用して
 
 ## この内容で登壇しました  
 [MIERUNE BBQ #11](https://mierune.connpass.com/event/330072/)
+[NoMaps2024]()
 
 ### 使用技術
 - TypeScript
