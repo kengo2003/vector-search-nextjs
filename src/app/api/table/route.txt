@@ -9,7 +9,7 @@
 //   const openai = new OpenAI({
 //     apiKey: process.env.OPENAI_API_KEY,
 //   });
-// async function generateOpenAIEmbeddings(profile: any) {//anyは修正する必要あり
+// async function generateOpenAIEmbeddings(profile:any) {//anyは修正する必要あり
 //     const textToEmbed = Object.values(profile).join(" ");
 //     const response = await openai.embeddings.create({
 //       model: "text-embedding-ada-002",
@@ -19,7 +19,7 @@
 //   }
 //   try {
 //     const processedDataArray = await Promise.all(
-//       celebrities.map(async (item: any) => {
+//       celebrities.map(async (item:any) => {
 //         const embeddings = await generateOpenAIEmbeddings(item);
 //         const modifiedItem = { ...item, embeddings };
 //         const { data, error } = await supabaseClient
